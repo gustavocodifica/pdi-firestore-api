@@ -33,4 +33,10 @@ export class InMemoryUsersRespository implements UsersRepository {
 
     return user
   }
+
+  async delete(id: string) {
+    const userIndex = this.items.findIndex(user => user.id === id)
+
+    this.items.splice(userIndex, 1)
+  }
 }
