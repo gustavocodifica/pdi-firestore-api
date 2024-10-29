@@ -1,6 +1,6 @@
 import admin from 'firebase-admin'
 
-import { env } from '@/env'
+import { env } from '@/infra/env'
 
 admin.initializeApp({
   credential: admin.credential.cert({
