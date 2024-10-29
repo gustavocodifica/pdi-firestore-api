@@ -1,5 +1,6 @@
 import { User } from '@/domain/enterprise/entities/user'
 import { UsersRepository } from '../repositories/users-repository'
+import { EmailAlreadyExistsError } from './errors/email-already-exists-error'
 
 interface CreateUserUseCaseParams {
   name: string
@@ -14,7 +15,7 @@ export class CreateUserUseCase {
     const emailAlreadyExists = await this.usersRepository.findByEmail(email)
 
     if (emailAlreadyExists) {
-      throw new Error('User email already exists.')
+      throw new EmailAlreadyExistsError()
     }
 
     const user = User.create({
