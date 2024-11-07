@@ -1,6 +1,7 @@
 import admin from 'firebase-admin'
 
 import { env } from '@/infra/env'
+import { Firestore } from 'firebase-admin/firestore'
 
 admin.initializeApp({
   credential: admin.credential.cert({
@@ -10,4 +11,4 @@ admin.initializeApp({
   }),
 })
 
-export const db = admin.firestore()
+export const db: Firestore = admin.firestore()
