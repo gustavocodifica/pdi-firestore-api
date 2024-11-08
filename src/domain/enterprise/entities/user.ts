@@ -33,7 +33,6 @@ export class User extends Entity<UserProps> {
     this.props.lastName = lastName
   }
 
-
   set createdAt(createdAt: Date) {
     this.props.createdAt = createdAt
   }

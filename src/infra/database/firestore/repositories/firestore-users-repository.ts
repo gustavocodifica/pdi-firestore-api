@@ -2,12 +2,26 @@ import { UsersRepository } from '@/domain/application/repositories/users-reposit
 import { User } from '@/domain/enterprise/entities/user'
 
 import { Firestore } from 'firebase-admin/firestore'
+import { Auth } from 'firebase-admin/auth'
 
 export class FirestoreUsersRepository implements UsersRepository {
-  constructor(private firestore: Firestore) {}
+  constructor(
+    private firestore: Firestore,
+    private auth: Auth,
+  ) {}
 
   async create(user: User) {
-    await this.firestore.collection('users').add(user)
+    const response = await this.auth.createUser({
+      displayName: user.name,
+      email: user.email,
+    })
+
+    await this.firestore.collection('users').doc(response.uid).set({
+      name: user.name,
+      lastName: user.lastName,
+      email: user.email,
+      createdAt: user.createdAt.toISOString(),
+    })
   }
 
   async save(user: User) {

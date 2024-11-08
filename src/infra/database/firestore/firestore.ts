@@ -1,7 +1,9 @@
 import admin from 'firebase-admin'
 
 import { env } from '@/infra/env'
+
 import { Firestore } from 'firebase-admin/firestore'
+import { Auth } from 'firebase-admin/auth'
 
 admin.initializeApp({
   credential: admin.credential.cert({
@@ -12,3 +14,5 @@ admin.initializeApp({
 })
 
 export const db: Firestore = admin.firestore()
+
+export const auth: Auth = admin.auth()
