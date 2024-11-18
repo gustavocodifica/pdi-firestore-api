@@ -73,6 +73,9 @@ export class FirestoreUsersRepository implements UsersRepository {
   }
 
   async delete(id: string) {
-    await this.firestore.collection('users').doc(id).delete()
+    await Promise.all([
+      this.auth.deleteUser(id),
+      this.firestore.collection('users').doc(id).delete(),
+    ])
   }
 }
