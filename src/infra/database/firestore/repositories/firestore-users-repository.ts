@@ -3,6 +3,7 @@ import { User } from '@/domain/enterprise/entities/user'
 
 import { Firestore } from 'firebase-admin/firestore'
 import { Auth } from 'firebase-admin/auth'
+import { FirestoreUserMapper } from '../mappers/firestore-user-mapper'
 
 export class FirestoreUsersRepository implements UsersRepository {
   constructor(
@@ -25,14 +26,17 @@ export class FirestoreUsersRepository implements UsersRepository {
   }
 
   async save(user: User) {
-    const newUser = {
-      name: user.name,
-      lastName: user.lastName,
-      email: user.email,
-      createdAt: user.createdAt,
-    }
+    const raw = FirestoreUserMapper.ToFirestore(user)
 
-    await this.firestore.collection('users').doc(user.id).update(newUser)
+    const { id, ...rest } = raw
+
+    await this.firestore
+      .collection('users')
+      .doc(id)
+      .update({
+        ...rest,
+        createdAt: rest.createdAt,
+      })
   }
 
   async findById(id: string) {
@@ -42,9 +46,15 @@ export class FirestoreUsersRepository implements UsersRepository {
       return null
     }
 
-    const userData = user.data() as User
+    const raw = {
+      id: user.id,
+      name: user.data()?.name as string,
+      lastName: user.data()?.lastName as string,
+      email: user.data()?.email as string,
+      createdAt: user.data()?.createdAt as string,
+    }
 
-    return userData
+    return FirestoreUserMapper.ToDomain(raw)
   }
 
   async findByEmail(email: string) {

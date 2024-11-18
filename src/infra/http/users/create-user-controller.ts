@@ -1,15 +1,14 @@
-import { FastifyController } from './protocols/fastify-controller'
+import { auth, db } from '@/infra/database/firestore/firestore'
+import { FirestoreUsersRepository } from '@/infra/database/firestore/repositories/firestore-users-repository'
 
 import { CreateUserUseCase } from '@/domain/application/use-cases/create-user'
+import { EmailAlreadyExistsError } from '@/domain/application/use-cases/errors/email-already-exists-error'
 
-import { auth, db } from '../database/firestore/firestore'
-import { FirestoreUsersRepository } from '../database/firestore/repositories/firestore-users-repository'
+import { ClientError } from '../errors/client-error'
+import { FastifyController } from '../protocols/fastify-controller'
 
 import z from 'zod'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-
-import { EmailAlreadyExistsError } from '@/domain/application/use-cases/errors/email-already-exists-error'
-import { ClientError } from './errors/client-error'
 
 export class CreateUserController implements FastifyController {
   constructor(private createUserUseCase: CreateUserUseCase) {}

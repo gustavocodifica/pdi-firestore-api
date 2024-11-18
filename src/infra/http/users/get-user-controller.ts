@@ -1,11 +1,11 @@
-import { FastifyController } from './protocols/fastify-controller'
+import { auth, db } from '@/infra/database/firestore/firestore'
+import { FirestoreUsersRepository } from '@/infra/database/firestore/repositories/firestore-users-repository'
 
 import { GetUserUseCase } from '@/domain/application/use-cases/get-user'
 import { ResourceNotFoundError } from '@/domain/application/use-cases/errors/resource-not-found-error'
-import { ClientError } from './errors/client-error'
 
-import { auth, db } from '../database/firestore/firestore'
-import { FirestoreUsersRepository } from '../database/firestore/repositories/firestore-users-repository'
+import { ClientError } from '../errors/client-error'
+import { FastifyController } from '../protocols/fastify-controller'
 
 import z from 'zod'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
@@ -29,6 +29,8 @@ export class GetUserController implements FastifyController {
         user,
       })
     } catch (error) {
+      console.error(error)
+
       if (error instanceof ResourceNotFoundError) {
         throw new ClientError(error.message)
       }
