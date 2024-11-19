@@ -39,4 +39,8 @@ export class InMemoryUsersRespository implements UsersRepository {
 
     this.items.splice(userIndex, 1)
   }
+
+  async findMany() {
+    return this.items
+  }
 }

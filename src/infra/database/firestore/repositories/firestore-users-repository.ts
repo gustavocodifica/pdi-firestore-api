@@ -3,7 +3,11 @@ import { User } from '@/domain/enterprise/entities/user'
 
 import { Firestore } from 'firebase-admin/firestore'
 import { Auth } from 'firebase-admin/auth'
-import { FirestoreUserMapper } from '../mappers/firestore-user-mapper'
+
+import {
+  FirestoreUser,
+  FirestoreUserMapper,
+} from '../mappers/firestore-user-mapper'
 
 export class FirestoreUsersRepository implements UsersRepository {
   constructor(
@@ -77,5 +81,24 @@ export class FirestoreUsersRepository implements UsersRepository {
       this.auth.deleteUser(id),
       this.firestore.collection('users').doc(id).delete(),
     ])
+  }
+
+  async findMany() {
+    const users = await this.firestore.collection('users').get()
+
+    const usersArray: FirestoreUser[] = users.docs.map(userDoc => {
+      const { name, lastName, email, createdAt } =
+        userDoc.data() as FirestoreUser
+
+      return {
+        id: userDoc.id,
+        name: name || '',
+        lastName: lastName || '',
+        email: email || '',
+        createdAt: createdAt || '',
+      }
+    })
+
+    return usersArray.map(user => FirestoreUserMapper.ToDomain(user))
   }
 }
