@@ -32,6 +32,8 @@ export class DeleteUserController implements FastifyController {
       if (error instanceof ResourceNotFoundError) {
         throw new ClientError(error.message)
       }
+
+      throw error
     }
   }
 }

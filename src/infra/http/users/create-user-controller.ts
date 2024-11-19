@@ -34,6 +34,8 @@ export class CreateUserController implements FastifyController {
       if (error instanceof EmailAlreadyExistsError) {
         throw new ClientError(error.message)
       }
+
+      throw error
     }
   }
 }

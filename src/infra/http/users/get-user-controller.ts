@@ -9,6 +9,7 @@ import { FastifyController } from '../protocols/fastify-controller'
 
 import z from 'zod'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import { UserPresenter } from '../presenters/user-presenter'
 
 export class GetUserController implements FastifyController {
   constructor(private getUserUseCase: GetUserUseCase) {}
@@ -21,19 +22,21 @@ export class GetUserController implements FastifyController {
     try {
       const { userId } = paramsSchema.parse(request.params)
 
-      const { user } = await this.getUserUseCase.execute({
+      const response = await this.getUserUseCase.execute({
         userId,
       })
+
+      const user = UserPresenter.toHTTP(response.user)
 
       return reply.status(200).send({
         user,
       })
     } catch (error) {
-      console.error(error)
-
       if (error instanceof ResourceNotFoundError) {
         throw new ClientError(error.message)
       }
+
+      throw error
     }
   }
 }

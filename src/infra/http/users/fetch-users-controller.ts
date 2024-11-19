@@ -6,16 +6,23 @@ import { FetchUsersUseCase } from '@/domain/application/use-cases/fetch-users'
 import { FastifyController } from '../protocols/fastify-controller'
 
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import { UserPresenter } from '../presenters/user-presenter'
 
 export class FetchUsersController implements FastifyController {
   constructor(private fetchUsersUseCase: FetchUsersUseCase) {}
 
   async handle(request: FastifyRequest, reply: FastifyReply) {
-    const { users } = await this.fetchUsersUseCase.execute()
+    try {
+      const response = await this.fetchUsersUseCase.execute()
 
-    return reply.status(200).send({
-      users,
-    })
+      const users = response.users.map(user => UserPresenter.toHTTP(user))
+
+      return reply.status(200).send({
+        users,
+      })
+    } catch (error) {
+      throw error
+    }
   }
 }
 
