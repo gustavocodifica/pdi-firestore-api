@@ -19,6 +19,7 @@ export class FirestoreUsersRepository implements UsersRepository {
     const response = await this.auth.createUser({
       displayName: user.name,
       email: user.email,
+      password: user.password,
     })
 
     await this.firestore.collection('users').doc(response.uid).set({

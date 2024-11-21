@@ -16,12 +16,14 @@ describe('Fetch users', () => {
       name: 'John',
       lastName: 'Doe',
       email: 'johndoe@gmail.com',
+      password: '123456',
     })
 
     const secondUser = User.create({
       name: 'John 2',
       lastName: 'Doe 2',
       email: 'johndoe2@gmail.com',
+      password: '123456',
     })
 
     inMemoryUsersRepository.create(firstUser)

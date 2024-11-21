@@ -17,6 +17,7 @@ describe('Delete user', () => {
       name: 'John',
       lastName: 'Doe',
       email: 'johndoe@gmail.com',
+      password: '123456',
     })
 
     inMemoryUsersRepository.create(user)

@@ -16,6 +16,7 @@ describe('Create user', () => {
       name: 'John',
       lastName: 'Doe',
       email: 'johndoe@gmail.com',
+      password: '123456,',
     })
 
     expect(inMemoryUsersRepository.items).toHaveLength(1)
@@ -28,6 +29,7 @@ describe('Create user', () => {
       name: 'John',
       lastName: 'Doe',
       email: 'johndoe@gmail.com',
+      password: '123456,',
     })
 
     await expect(() =>
@@ -35,6 +37,7 @@ describe('Create user', () => {
         name: 'John 2',
         lastName: 'Doe',
         email: 'johndoe@gmail.com',
+        password: '123456,',
       }),
     ).rejects.toBeInstanceOf(EmailAlreadyExistsError)
   })

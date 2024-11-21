@@ -18,15 +18,17 @@ export class CreateUserController implements FastifyController {
       name: z.string(),
       lastName: z.string(),
       email: z.string().email(),
+      password: z.string().min(6),
     })
 
     try {
-      const { name, lastName, email } = bodySchema.parse(request.body)
+      const { name, lastName, email, password } = bodySchema.parse(request.body)
 
       await this.createUserUseCase.execute({
         name,
         lastName,
         email,
+        password,
       })
 
       return reply.status(201).send()

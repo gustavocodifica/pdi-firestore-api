@@ -6,12 +6,13 @@ interface CreateUserUseCaseParams {
   name: string
   lastName: string
   email: string
+  password: string
 }
 
 export class CreateUserUseCase {
   constructor(private usersRepository: UsersRepository) {}
 
-  async execute({ name, lastName, email }: CreateUserUseCaseParams) {
+  async execute({ name, lastName, email, password }: CreateUserUseCaseParams) {
     const emailAlreadyExists = await this.usersRepository.findByEmail(email)
 
     if (emailAlreadyExists) {
@@ -22,6 +23,7 @@ export class CreateUserUseCase {
       name,
       lastName,
       email,
+      password,
     })
 
     await this.usersRepository.create(user)
