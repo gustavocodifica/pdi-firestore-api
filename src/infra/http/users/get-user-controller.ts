@@ -4,12 +4,13 @@ import { FirestoreUsersRepository } from '@/infra/database/firestore/repositorie
 import { GetUserUseCase } from '@/domain/application/use-cases/get-user'
 import { ResourceNotFoundError } from '@/domain/application/use-cases/errors/resource-not-found-error'
 
+import { UserPresenter } from '../presenters/user-presenter'
 import { ClientError } from '../errors/client-error'
 import { FastifyController } from '../protocols/fastify-controller'
+import { verifyToken } from '../middleware/verify-token'
 
 import z from 'zod'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import { UserPresenter } from '../presenters/user-presenter'
 
 export class GetUserController implements FastifyController {
   constructor(private getUserUseCase: GetUserUseCase) {}
@@ -47,7 +48,11 @@ export async function getUser(app: FastifyInstance) {
 
   const getUserController = new GetUserController(getUserUseCase)
 
-  app.get('/users/:userId', async (request, reply) => {
-    await getUserController.handle(request, reply)
-  })
+  app.get(
+    '/users/:userId',
+    { preHandler: verifyToken },
+    async (request, reply) => {
+      await getUserController.handle(request, reply)
+    },
+  )
 }

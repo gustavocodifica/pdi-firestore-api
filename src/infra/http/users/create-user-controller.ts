@@ -6,6 +6,7 @@ import { EmailAlreadyExistsError } from '@/domain/application/use-cases/errors/e
 
 import { ClientError } from '../errors/client-error'
 import { FastifyController } from '../protocols/fastify-controller'
+import { verifyToken } from '../middleware/verify-token'
 
 import z from 'zod'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
@@ -48,7 +49,7 @@ export async function createUser(app: FastifyInstance) {
 
   const createUserController = new CreateUserController(createUserUseCase)
 
-  app.post('/users', async (request, reply) => {
+  app.post('/users', { preHandler: verifyToken }, async (request, reply) => {
     await createUserController.handle(request, reply)
   })
 }

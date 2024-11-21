@@ -6,6 +6,7 @@ import { FirestoreUsersRepository } from '@/infra/database/firestore/repositorie
 
 import { ClientError } from '../errors/client-error'
 import { FastifyController } from '../protocols/fastify-controller'
+import { verifyToken } from '../middleware/verify-token'
 
 import z from 'zod'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
@@ -53,7 +54,11 @@ export async function editUser(app: FastifyInstance) {
 
   const editUserController = new EditUserController(editUserUseCase)
 
-  app.put('/users/:userId', async (request, reply) => {
-    await editUserController.handle(request, reply)
-  })
+  app.put(
+    '/users/:userId',
+    { preHandler: verifyToken },
+    async (request, reply) => {
+      await editUserController.handle(request, reply)
+    },
+  )
 }

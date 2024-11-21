@@ -3,10 +3,11 @@ import { FirestoreUsersRepository } from '@/infra/database/firestore/repositorie
 
 import { FetchUsersUseCase } from '@/domain/application/use-cases/fetch-users'
 
+import { UserPresenter } from '../presenters/user-presenter'
 import { FastifyController } from '../protocols/fastify-controller'
+import { verifyToken } from '../middleware/verify-token'
 
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import { UserPresenter } from '../presenters/user-presenter'
 
 export class FetchUsersController implements FastifyController {
   constructor(private fetchUsersUseCase: FetchUsersUseCase) {}
@@ -32,7 +33,7 @@ export async function fetchUsers(app: FastifyInstance) {
 
   const fetchUsersController = new FetchUsersController(fetchUsersUseCase)
 
-  app.get('/users/', async (request, reply) => {
+  app.get('/users/', { preHandler: verifyToken }, async (request, reply) => {
     await fetchUsersController.handle(request, reply)
   })
 }
