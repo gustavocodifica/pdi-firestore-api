@@ -2,32 +2,36 @@ import { User } from '@/domain/enterprise/entities/user'
 
 export interface FirestoreUser {
   id: string
-  name: string
-  lastName: string
+  displayName: string
   email: string
-  createdAt: string
+  empresa: string
+  departamento: string
+  userType: string
 }
 
 export class FirestoreUserMapper {
   static ToDomain(raw: FirestoreUser): User {
     return new User(
       {
-        name: raw.name,
-        lastName: raw.lastName,
-        createdAt: new Date(raw.createdAt),
+        displayName: raw.displayName,
         email: raw.email,
+        company: raw.empresa,
+        department: raw.departamento,
+        userType: raw.userType,
+        password: '',
       },
       raw.id,
     )
   }
 
-  static ToFirestore(user: User) {
+  static ToFirestore(user: User): FirestoreUser {
     return {
       id: user.id.toString(),
-      name: user.name,
-      lastName: user.lastName,
+      displayName: user.displayName,
       email: user.email,
-      createdAt: user.createdAt.toISOString(),
+      empresa: user.company,
+      departamento: user.department,
+      userType: user.userType,
     }
   }
 }

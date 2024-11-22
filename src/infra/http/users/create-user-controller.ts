@@ -17,20 +17,25 @@ export class CreateUserController implements FastifyController {
 
   async handle(request: FastifyRequest, reply: FastifyReply) {
     const bodySchema = z.object({
-      name: z.string(),
-      lastName: z.string(),
+      displayName: z.string(),
       email: z.string().email(),
       password: z.string().min(6),
+      company: z.string(),
+      department: z.string(),
+      userType: z.string(),
     })
 
     try {
-      const { name, lastName, email, password } = bodySchema.parse(request.body)
+      const { displayName, email, password, company, department, userType } =
+        bodySchema.parse(request.body)
 
       const response = await this.createUserUseCase.execute({
-        name,
-        lastName,
+        displayName,
         email,
         password,
+        company,
+        department,
+        userType,
       })
 
       const user = UserPresenter.toHTTP(response.user)
@@ -64,12 +69,21 @@ export async function createUser(app: FastifyInstance) {
         tags: ['users'],
         body: {
           type: 'object',
-          required: ['name', 'lastName', 'email', 'password'],
+          required: [
+            'displayName',
+            'email',
+            'password',
+            'company',
+            'department',
+            'userType',
+          ],
           properties: {
-            name: { type: 'string' },
-            lastName: { type: 'string' },
+            displayName: { type: 'string' },
             email: { type: 'string', format: 'email' },
             password: { type: 'string', minLength: 6 },
+            company: { type: 'string' },
+            department: { type: 'string' },
+            userType: { type: 'string' },
           },
         },
         response: {
@@ -79,10 +93,12 @@ export async function createUser(app: FastifyInstance) {
               user: {
                 type: 'object',
                 properties: {
-                  name: { type: 'string' },
-                  lastName: { type: 'string' },
+                  id: { type: 'string' },
+                  displayName: { type: 'string' },
                   email: { type: 'string', format: 'email' },
-                  createdAt: { type: 'string', format: 'date-time' },
+                  company: { type: 'string' },
+                  department: { type: 'string' },
+                  userType: { type: 'string' },
                 },
               },
             },

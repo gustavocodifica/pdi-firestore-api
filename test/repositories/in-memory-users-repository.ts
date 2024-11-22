@@ -6,6 +6,8 @@ export class InMemoryUsersRespository implements UsersRepository {
 
   async create(user: User) {
     this.items.push(user)
+
+    return user
   }
 
   async save(user: User) {
@@ -40,7 +42,7 @@ export class InMemoryUsersRespository implements UsersRepository {
     this.items.splice(userIndex, 1)
   }
 
-  async findMany() {
-    return this.items
+  async findMany(company: string) {
+    return this.items.filter(user => user.company === company)
   }
 }

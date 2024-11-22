@@ -4,10 +4,11 @@ export class UserPresenter {
   static toHTTP(user: User) {
     return {
       id: user.id.toString(),
-      name: user.name,
+      displayName: user.displayName,
       email: user.email,
-      lastName: user.lastName,
-      createdAt: user.createdAt,
+      department: user.department,
+      company: user.company,
+      userType: user.userType,
     }
   }
 }

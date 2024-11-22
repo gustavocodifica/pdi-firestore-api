@@ -21,19 +21,23 @@ export class EditUserController implements FastifyController {
     })
 
     const bodySchema = z.object({
-      name: z.string(),
-      lastName: z.string(),
+      displayName: z.string(),
+      department: z.string(),
+      userType: z.string(),
     })
 
     try {
       const { userId } = paramsSchema.parse(request.params)
 
-      const { name, lastName } = bodySchema.parse(request.body)
+      const { displayName, department, userType } = bodySchema.parse(
+        request.body,
+      )
 
       const response = await this.editUserUseCase.execute({
         userId,
-        name,
-        lastName,
+        displayName,
+        department,
+        userType,
       })
 
       const user = UserPresenter.toHTTP(response.user)
@@ -74,8 +78,9 @@ export async function editUser(app: FastifyInstance) {
         body: {
           type: 'object',
           properties: {
-            name: { type: 'string' },
-            lastName: { type: 'string' },
+            displayName: { type: 'string' },
+            department: { type: 'string' },
+            userType: { type: 'string' },
           },
         },
         response: {
@@ -86,10 +91,11 @@ export async function editUser(app: FastifyInstance) {
                 type: 'object',
                 properties: {
                   id: { type: 'string' },
-                  name: { type: 'string' },
-                  lastName: { type: 'string' },
+                  displayName: { type: 'string' },
                   email: { type: 'string', format: 'email' },
-                  createdAt: { type: 'string', format: 'date-time' },
+                  company: { type: 'string' },
+                  department: { type: 'string' },
+                  userType: { type: 'string' },
                 },
               },
             },

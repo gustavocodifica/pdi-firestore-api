@@ -17,17 +17,29 @@ export class FirestoreUsersRepository implements UsersRepository {
 
   async create(user: User) {
     const response = await this.auth.createUser({
-      displayName: user.name,
+      displayName: user.displayName,
       email: user.email,
       password: user.password,
     })
 
     await this.firestore.collection('users').doc(response.uid).set({
-      name: user.name,
-      lastName: user.lastName,
+      displayName: user.displayName,
       email: user.email,
-      createdAt: user.createdAt.toISOString(),
+      empresa: user.company,
+      departamento: user.department,
+      userType: user.userType,
     })
+
+    const raw = {
+      id: response.uid,
+      displayName: user.displayName,
+      email: user.email,
+      empresa: user.company,
+      departamento: user.department,
+      userType: user.userType,
+    }
+
+    return FirestoreUserMapper.ToDomain(raw)
   }
 
   async save(user: User) {
@@ -40,7 +52,6 @@ export class FirestoreUsersRepository implements UsersRepository {
       .doc(id)
       .update({
         ...rest,
-        createdAt: rest.createdAt,
       })
   }
 
@@ -53,10 +64,11 @@ export class FirestoreUsersRepository implements UsersRepository {
 
     const raw = {
       id: user.id,
-      name: user.data()?.name as string,
-      lastName: user.data()?.lastName as string,
+      displayName: user.data()?.displayName as string,
       email: user.data()?.email as string,
-      createdAt: user.data()?.createdAt as string,
+      empresa: user.data()?.empresa as string,
+      departamento: user.data()?.departamento as string,
+      userType: user.data()?.userType as string,
     }
 
     return FirestoreUserMapper.ToDomain(raw)
@@ -84,19 +96,23 @@ export class FirestoreUsersRepository implements UsersRepository {
     ])
   }
 
-  async findMany() {
-    const users = await this.firestore.collection('users').get()
+  async findMany(company: string) {
+    const users = await this.firestore
+      .collection('users')
+      .where('empresa', '==', company)
+      .get()
 
     const usersArray: FirestoreUser[] = users.docs.map(userDoc => {
-      const { name, lastName, email, createdAt } =
+      const { displayName, email, empresa, departamento, userType } =
         userDoc.data() as FirestoreUser
 
       return {
         id: userDoc.id,
-        name: name || '',
-        lastName: lastName || '',
+        displayName: displayName || '',
         email: email || '',
-        createdAt: createdAt || '',
+        departamento: departamento || '',
+        empresa: empresa || '',
+        userType: userType || '',
       }
     })
 

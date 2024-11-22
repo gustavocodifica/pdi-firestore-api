@@ -1,7 +1,7 @@
 import { auth, db } from '@/infra/database/firestore/firestore'
 import { FirestoreUsersRepository } from '@/infra/database/firestore/repositories/firestore-users-repository'
 
-import { FetchUsersUseCase } from '@/domain/application/use-cases/fetch-users'
+import { FetchUsersByCompanyUseCase } from '@/domain/application/use-cases/fetch-users-by-company'
 
 import { UserPresenter } from '../presenters/user-presenter'
 import { FastifyController } from '../protocols/fastify-controller'
@@ -9,12 +9,19 @@ import { verifyToken } from '../middleware/verify-token'
 
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 
-export class FetchUsersController implements FastifyController {
-  constructor(private fetchUsersUseCase: FetchUsersUseCase) {}
+import z from 'zod'
+export class FetchUsersByCompanyController implements FastifyController {
+  constructor(private fetchUsersUseCase: FetchUsersByCompanyUseCase) {}
 
   async handle(request: FastifyRequest, reply: FastifyReply) {
+    const queryParams = z.object({
+      company: z.string(),
+    })
+
     try {
-      const response = await this.fetchUsersUseCase.execute()
+      const { company } = queryParams.parse(request.query)
+
+      const response = await this.fetchUsersUseCase.execute({ company })
 
       const users = response.users.map(user => UserPresenter.toHTTP(user))
 
@@ -27,20 +34,32 @@ export class FetchUsersController implements FastifyController {
   }
 }
 
-export async function fetchUsers(app: FastifyInstance) {
+export async function fetchUsersByCompany(app: FastifyInstance) {
   const usersRepository = new FirestoreUsersRepository(db, auth)
-  const fetchUsersUseCase = new FetchUsersUseCase(usersRepository)
+  const fetchUsersUseCase = new FetchUsersByCompanyUseCase(usersRepository)
 
-  const fetchUsersController = new FetchUsersController(fetchUsersUseCase)
+  const fetchUsersController = new FetchUsersByCompanyController(
+    fetchUsersUseCase,
+  )
 
   app.get(
-    '/users/',
+    '/users',
     {
       preHandler: verifyToken,
       schema: {
         summary: 'Fetch users',
         description: 'Access granted only when a valid token is provided.',
         tags: ['users'],
+        querystring: {
+          type: 'object',
+          properties: {
+            company: {
+              type: 'string',
+              description: 'The name of the company to filter users by.',
+            },
+          },
+          required: ['company'],
+        },
         response: {
           200: {
             type: 'object',
@@ -51,17 +70,19 @@ export async function fetchUsers(app: FastifyInstance) {
                   type: 'object',
                   properties: {
                     id: { type: 'string' },
-                    name: { type: 'string' },
-                    lastName: {
-                      type: 'string',
-                    },
+                    displayName: { type: 'string' },
                     email: {
                       type: 'string',
                       format: 'email',
                     },
-                    createdAt: {
+                    company: {
                       type: 'string',
-                      format: 'date-time',
+                    },
+                    department: {
+                      type: 'string',
+                    },
+                    userType: {
+                      type: 'string',
                     },
                   },
                 },

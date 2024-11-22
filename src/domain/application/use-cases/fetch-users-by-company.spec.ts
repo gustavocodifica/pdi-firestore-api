@@ -1,14 +1,14 @@
 import { InMemoryUsersRespository } from '@/repositories/in-memory-users-repository'
-import { FetchUsersUseCase } from './fetch-users'
+import { FetchUsersByCompanyUseCase } from './fetch-users-by-company'
 import { User } from '@/domain/enterprise/entities/user'
 
-let sut: FetchUsersUseCase
+let sut: FetchUsersByCompanyUseCase
 let inMemoryUsersRepository: InMemoryUsersRespository
 
 describe('Fetch users', () => {
   beforeEach(() => {
     inMemoryUsersRepository = new InMemoryUsersRespository()
-    sut = new FetchUsersUseCase(inMemoryUsersRepository)
+    sut = new FetchUsersByCompanyUseCase(inMemoryUsersRepository)
   })
 
   it('should be able to fetch users', async () => {
@@ -25,7 +25,7 @@ describe('Fetch users', () => {
       displayName: 'John 2',
       email: 'johndoe2@gmail.com',
       password: '123456',
-      company: 'development',
+      company: 'company-abc',
       department: 'CS',
       userType: 'admin',
     })
@@ -33,10 +33,10 @@ describe('Fetch users', () => {
     inMemoryUsersRepository.create(firstUser)
     inMemoryUsersRepository.create(secondUser)
 
-    const { users } = await sut.execute()
+    const { users } = await sut.execute({ company: 'development' })
 
-    expect(users).toHaveLength(2)
-    expect(users[0].displayName).toEqual('John')
-    expect(users[1].displayName).toEqual('John 2')
+    expect(users).toHaveLength(1)
+    expect(users).toHaveLength(1)
+    expect(users[0].company).toEqual('development')
   })
 })

@@ -37,10 +37,10 @@ export class CreateUserUseCase {
       userType,
     })
 
-    await this.usersRepository.create(user)
+    const response = await this.usersRepository.create(user)
 
     return {
-      user,
+      user: response,
     }
   }
 }
