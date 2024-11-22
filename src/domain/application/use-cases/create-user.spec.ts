@@ -13,31 +13,37 @@ describe('Create user', () => {
 
   it('should be able to create a new user', async () => {
     await sut.execute({
-      name: 'John',
-      lastName: 'Doe',
+      displayName: 'John',
       email: 'johndoe@gmail.com',
       password: '123456,',
+      company: 'development',
+      department: 'CS',
+      userType: 'admin',
     })
 
     expect(inMemoryUsersRepository.items).toHaveLength(1)
-    expect(inMemoryUsersRepository.items[0].name).toEqual('John')
+    expect(inMemoryUsersRepository.items[0].displayName).toEqual('John')
     expect(inMemoryUsersRepository.items[0].email).toEqual('johndoe@gmail.com')
   })
 
   it('should prevent to create a new user when the provided email already exists', async () => {
     await sut.execute({
-      name: 'John',
-      lastName: 'Doe',
+      displayName: 'John',
       email: 'johndoe@gmail.com',
       password: '123456,',
+      company: 'development',
+      department: 'CS',
+      userType: 'admin',
     })
 
     await expect(() =>
       sut.execute({
-        name: 'John 2',
-        lastName: 'Doe',
+        displayName: 'John 2',
         email: 'johndoe@gmail.com',
         password: '123456,',
+        company: 'development',
+        department: 'CS',
+        userType: 'admin',
       }),
     ).rejects.toBeInstanceOf(EmailAlreadyExistsError)
   })

@@ -14,10 +14,12 @@ describe('Delete user', () => {
 
   it('should be able to delete a user', async () => {
     const user = User.create({
-      name: 'John',
-      lastName: 'Doe',
+      displayName: 'John',
       email: 'johndoe@gmail.com',
       password: '123456',
+      department: 'CS',
+      company: 'development',
+      userType: 'admin',
     })
 
     inMemoryUsersRepository.create(user)

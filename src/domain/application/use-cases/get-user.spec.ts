@@ -14,10 +14,12 @@ describe('Get user', () => {
 
   it('should be able to get user', async () => {
     const user = User.create({
-      name: 'John',
-      lastName: 'Doe',
+      displayName: 'John',
       email: 'johndoe@gmail.com',
       password: '123456',
+      company: 'development',
+      department: 'CS',
+      userType: 'admin',
     })
 
     inMemoryUsersRepository.create(user)
@@ -26,8 +28,7 @@ describe('Get user', () => {
       userId: user.id,
     })
 
-    expect(inMemoryUsersRepository.items[0].name).toEqual('John')
-    expect(inMemoryUsersRepository.items[0].lastName).toEqual('Doe')
+    expect(inMemoryUsersRepository.items[0].displayName).toEqual('John')
   })
 
   it('should prevent to get a user that does not exists', async () => {

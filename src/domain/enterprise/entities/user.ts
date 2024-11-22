@@ -1,21 +1,17 @@
 import { Entity } from '@/core/entity'
-import { Optional } from '@/core/optional'
 
 export interface UserProps {
-  name: string
-  lastName: string
+  displayName: string
   email: string
   password: string
-  createdAt: Date
+  company: string
+  department: string
+  userType: string
 }
 
 export class User extends Entity<UserProps> {
-  get name() {
-    return this.props.name
-  }
-
-  get lastName() {
-    return this.props.lastName
+  get displayName() {
+    return this.props.displayName
   }
 
   get email() {
@@ -26,27 +22,34 @@ export class User extends Entity<UserProps> {
     return this.props.password
   }
 
-  get createdAt() {
-    return this.props.createdAt
+  get company() {
+    return this.props.company
   }
 
-  set name(name: string) {
-    this.props.name = name
+  get department() {
+    return this.props.department
   }
 
-  set lastName(lastName: string) {
-    this.props.lastName = lastName
+  get userType() {
+    return this.props.userType
   }
 
-  set createdAt(createdAt: Date) {
-    this.props.createdAt = createdAt
+  set displayName(displayName: string) {
+    this.props.displayName = displayName
   }
 
-  static create(props: Optional<UserProps, 'createdAt'>, id?: string) {
+  set department(department: string) {
+    this.props.department = department
+  }
+
+  set userType(userType: string) {
+    this.props.userType = userType
+  }
+
+  static create(props: UserProps, id?: string) {
     const user = new User(
       {
         ...props,
-        createdAt: props.createdAt ?? new Date(),
       },
       id,
     )

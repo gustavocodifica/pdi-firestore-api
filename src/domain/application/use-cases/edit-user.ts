@@ -3,22 +3,29 @@ import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
 interface EditUserUseCaseParams {
   userId: string
-  name: string
-  lastName: string
+  displayName: string
+  department: string
+  userType: string
 }
 
 export class EditUserUseCase {
   constructor(private usersRepository: UsersRepository) {}
 
-  async execute({ userId, name, lastName }: EditUserUseCaseParams) {
+  async execute({
+    userId,
+    displayName,
+    department,
+    userType,
+  }: EditUserUseCaseParams) {
     const user = await this.usersRepository.findById(userId)
 
     if (!user) {
       throw new ResourceNotFoundError()
     }
 
-    user.name = name
-    user.lastName = lastName
+    user.displayName = displayName
+    user.department = department
+    user.userType = userType
 
     await this.usersRepository.save(user)
 

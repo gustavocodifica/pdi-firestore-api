@@ -14,30 +14,37 @@ describe('Edit user', () => {
 
   it('should be able to edit a user', async () => {
     const user = User.create({
-      name: 'John',
-      lastName: 'Doe',
+      displayName: 'John',
       email: 'johndoe@gmail.com',
       password: '123456',
+      department: 'CS',
+      company: 'development',
+      userType: 'admin',
     })
 
     inMemoryUsersRepository.create(user)
 
     await sut.execute({
       userId: user.id,
-      name: 'John 2',
-      lastName: 'Doe 2',
+      displayName: 'John 2',
+      department: 'Desenvolvimento',
+      userType: 'viewer',
     })
 
-    expect(inMemoryUsersRepository.items[0].name).toEqual('John 2')
-    expect(inMemoryUsersRepository.items[0].lastName).toEqual('Doe 2')
+    expect(inMemoryUsersRepository.items[0].displayName).toEqual('John 2')
+    expect(inMemoryUsersRepository.items[0].department).toEqual(
+      'Desenvolvimento',
+    )
+    expect(inMemoryUsersRepository.items[0].userType).toEqual('viewer')
   })
 
   it('should prevent to edit a user that does not exists', async () => {
     await expect(() =>
       sut.execute({
         userId: 'fake-user-id',
-        name: 'John',
-        lastName: 'Doe',
+        displayName: 'John 2',
+        department: 'Desenvolvimento',
+        userType: 'viewer',
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })

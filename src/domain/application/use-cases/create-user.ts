@@ -3,16 +3,25 @@ import { UsersRepository } from '../repositories/users-repository'
 import { EmailAlreadyExistsError } from './errors/email-already-exists-error'
 
 interface CreateUserUseCaseParams {
-  name: string
-  lastName: string
+  displayName: string
   email: string
   password: string
+  department: string
+  company: string
+  userType: string
 }
 
 export class CreateUserUseCase {
   constructor(private usersRepository: UsersRepository) {}
 
-  async execute({ name, lastName, email, password }: CreateUserUseCaseParams) {
+  async execute({
+    displayName,
+    email,
+    password,
+    department,
+    company,
+    userType,
+  }: CreateUserUseCaseParams) {
     const emailAlreadyExists = await this.usersRepository.findByEmail(email)
 
     if (emailAlreadyExists) {
@@ -20,10 +29,12 @@ export class CreateUserUseCase {
     }
 
     const user = User.create({
-      name,
-      lastName,
+      displayName,
       email,
       password,
+      department,
+      company,
+      userType,
     })
 
     await this.usersRepository.create(user)

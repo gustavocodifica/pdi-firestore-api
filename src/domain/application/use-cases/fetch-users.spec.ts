@@ -13,17 +13,21 @@ describe('Fetch users', () => {
 
   it('should be able to fetch users', async () => {
     const firstUser = User.create({
-      name: 'John',
-      lastName: 'Doe',
+      displayName: 'John',
       email: 'johndoe@gmail.com',
       password: '123456',
+      company: 'development',
+      department: 'CS',
+      userType: 'admin',
     })
 
     const secondUser = User.create({
-      name: 'John 2',
-      lastName: 'Doe 2',
+      displayName: 'John 2',
       email: 'johndoe2@gmail.com',
       password: '123456',
+      company: 'development',
+      department: 'CS',
+      userType: 'admin',
     })
 
     inMemoryUsersRepository.create(firstUser)
@@ -32,7 +36,7 @@ describe('Fetch users', () => {
     const { users } = await sut.execute()
 
     expect(users).toHaveLength(2)
-    expect(users[0].name).toEqual('John')
-    expect(users[1].name).toEqual('John 2')
+    expect(users[0].displayName).toEqual('John')
+    expect(users[1].displayName).toEqual('John 2')
   })
 })
