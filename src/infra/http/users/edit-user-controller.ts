@@ -7,6 +7,7 @@ import { FirestoreUsersRepository } from '@/infra/database/firestore/repositorie
 import { ClientError } from '../errors/client-error'
 import { FastifyController } from '../protocols/fastify-controller'
 import { verifyToken } from '../middleware/verify-token'
+import { UserPresenter } from '../presenters/user-presenter'
 
 import z from 'zod'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
@@ -29,14 +30,16 @@ export class EditUserController implements FastifyController {
 
       const { name, lastName } = bodySchema.parse(request.body)
 
-      await this.editUserUseCase.execute({
+      const response = await this.editUserUseCase.execute({
         userId,
         name,
         lastName,
       })
 
+      const user = UserPresenter.toHTTP(response.user)
+
       return reply.send({
-        userId,
+        user,
       })
     } catch (error) {
       if (error instanceof ResourceNotFoundError) {
@@ -56,7 +59,55 @@ export async function editUser(app: FastifyInstance) {
 
   app.put(
     '/users/:userId',
-    { preHandler: verifyToken },
+    {
+      preHandler: verifyToken,
+      schema: {
+        summary: 'Update a user',
+        description: 'Access granted only when a valid token is provided.',
+        tags: ['users'],
+        params: {
+          type: 'object',
+          properties: {
+            userId: { type: 'string' },
+          },
+        },
+        body: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            lastName: { type: 'string' },
+          },
+        },
+        response: {
+          201: {
+            type: 'object',
+            properties: {
+              user: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  name: { type: 'string' },
+                  lastName: { type: 'string' },
+                  email: { type: 'string', format: 'email' },
+                  createdAt: { type: 'string', format: 'date-time' },
+                },
+              },
+            },
+          },
+          400: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+        },
+        security: [
+          {
+            BearerAuth: [],
+          },
+        ],
+      },
+    },
     async (request, reply) => {
       await editUserController.handle(request, reply)
     },

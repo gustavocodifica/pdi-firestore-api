@@ -47,7 +47,39 @@ export async function deleteUser(app: FastifyInstance) {
 
   app.delete(
     '/users/:userId',
-    { preHandler: verifyToken },
+    {
+      preHandler: verifyToken,
+
+      schema: {
+        summary: 'Delete a user',
+        description: 'Access granted only when a valid token is provided.',
+        tags: ['users'],
+        params: {
+          type: 'object',
+          required: ['userId'],
+          properties: {
+            userId: { type: 'string' },
+          },
+        },
+        response: {
+          204: {
+            type: 'object',
+          },
+          400: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+        },
+
+        security: [
+          {
+            BearerAuth: [],
+          },
+        ],
+      },
+    },
     async (request, reply) => {
       await editUserController.handle(request, reply)
     },

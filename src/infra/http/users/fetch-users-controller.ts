@@ -33,7 +33,51 @@ export async function fetchUsers(app: FastifyInstance) {
 
   const fetchUsersController = new FetchUsersController(fetchUsersUseCase)
 
-  app.get('/users/', { preHandler: verifyToken }, async (request, reply) => {
-    await fetchUsersController.handle(request, reply)
-  })
+  app.get(
+    '/users/',
+    {
+      preHandler: verifyToken,
+      schema: {
+        summary: 'Fetch users',
+        description: 'Access granted only when a valid token is provided.',
+        tags: ['users'],
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              users: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string' },
+                    name: { type: 'string' },
+                    lastName: {
+                      type: 'string',
+                    },
+                    email: {
+                      type: 'string',
+                      format: 'email',
+                    },
+                    createdAt: {
+                      type: 'string',
+                      format: 'date-time',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        security: [
+          {
+            BearerAuth: [],
+          },
+        ],
+      },
+    },
+    async (request, reply) => {
+      await fetchUsersController.handle(request, reply)
+    },
+  )
 }

@@ -50,7 +50,52 @@ export async function getUser(app: FastifyInstance) {
 
   app.get(
     '/users/:userId',
-    { preHandler: verifyToken },
+    {
+      preHandler: verifyToken,
+
+      schema: {
+        summary: 'Get a user',
+        description: 'Access granted only when a valid token is provided.',
+        tags: ['users'],
+        params: {
+          type: 'object',
+          required: ['userId'],
+          properties: {
+            userId: { type: 'string' },
+          },
+        },
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              user: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  name: { type: 'string' },
+                  lastName: { type: 'string' },
+                  email: { type: 'string', format: 'email' },
+                  createdAt: { type: 'string', format: 'date-time' },
+                },
+              },
+            },
+          },
+          400: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+        },
+
+        security: [
+          {
+            BearerAuth: [],
+          },
+        ],
+      },
+    },
+
     async (request, reply) => {
       await getUserController.handle(request, reply)
     },

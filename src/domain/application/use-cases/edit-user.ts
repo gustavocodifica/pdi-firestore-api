@@ -21,5 +21,9 @@ export class EditUserUseCase {
     user.lastName = lastName
 
     await this.usersRepository.save(user)
+
+    return {
+      user,
+    }
   }
 }

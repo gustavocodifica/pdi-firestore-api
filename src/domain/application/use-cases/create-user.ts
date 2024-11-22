@@ -27,5 +27,9 @@ export class CreateUserUseCase {
     })
 
     await this.usersRepository.create(user)
+
+    return {
+      user,
+    }
   }
 }

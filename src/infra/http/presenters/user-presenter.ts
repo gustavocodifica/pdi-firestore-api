@@ -5,6 +5,7 @@ export class UserPresenter {
     return {
       id: user.id.toString(),
       name: user.name,
+      email: user.email,
       lastName: user.lastName,
       createdAt: user.createdAt,
     }
