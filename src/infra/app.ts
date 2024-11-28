@@ -3,6 +3,8 @@ import fastify from 'fastify'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
 
+import cors from '@fastify/cors'
+
 import { errorHandler } from './error-handler'
 import { getUser } from './http/users/get-user-controller'
 import { createUser } from './http/users/create-user-controller'
@@ -11,6 +13,10 @@ import { deleteUser } from './http/users/delete-user-controller'
 import { fetchUsersByCompany } from './http/users/fetch-users-by-company-controller'
 
 export const app = fastify()
+
+app.register(cors, {
+  origin: '*',
+})
 
 app.register(fastifySwagger, {
   openapi: {

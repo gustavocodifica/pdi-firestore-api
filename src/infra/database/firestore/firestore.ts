@@ -1,6 +1,6 @@
 import admin from 'firebase-admin'
 
-import { env } from '@/infra/env'
+import { env } from '../../env'
 
 import { Firestore } from 'firebase-admin/firestore'
 import { Auth } from 'firebase-admin/auth'
