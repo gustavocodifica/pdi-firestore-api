@@ -5,7 +5,9 @@ import { FetchUsersByCompanyUseCase } from '@/domain/application/use-cases/fetch
 
 import { UserPresenter } from '../presenters/user-presenter'
 import { FastifyController } from '../protocols/fastify-controller'
-import { verifyToken } from '../middleware/verify-token'
+
+import { FirebaseAuthService } from '../auth/firebase-auth-service'
+import { FastifyVerifyTokenMiddleware } from '../middleware/verify-token'
 
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 
@@ -42,10 +44,13 @@ export async function fetchUsersByCompany(app: FastifyInstance) {
     fetchUsersUseCase,
   )
 
+  const authService = new FirebaseAuthService(auth)
+  const verifyTokenMiddleware = new FastifyVerifyTokenMiddleware(authService)
+
   app.get(
     '/users',
     {
-      preHandler: verifyToken,
+      preHandler: verifyTokenMiddleware.handle(),
       schema: {
         summary: 'Fetch users',
         description: 'Access granted only when a valid token is provided.',

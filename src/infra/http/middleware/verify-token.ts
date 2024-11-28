@@ -1,29 +1,36 @@
-import { auth } from '@/infra/database/firestore/firestore'
+import { AuthService } from '../auth/auth-service'
+
 import { FastifyReply, FastifyRequest } from 'fastify'
 
-export async function verifyToken(
-  request: FastifyRequest,
-  reply: FastifyReply,
-) {
-  try {
-    const authHeader = request.headers['authorization']
+export class FastifyVerifyTokenMiddleware {
+  constructor(private authService: AuthService) {}
 
-    if (!authHeader) {
-      return reply
-        .status(401)
-        .send({ message: 'Unauthorized: No token provided.' })
+  handle() {
+    return async (
+      request: FastifyRequest,
+      reply: FastifyReply,
+    ): Promise<void> => {
+      try {
+        const authHeader = request.headers['authorization']
+
+        if (!authHeader) {
+          return reply
+            .status(401)
+            .send({ message: 'Unauthorized: No token provided.' })
+        }
+
+        const [_, token] = authHeader.split(' ')
+
+        if (!token) {
+          return reply
+            .status(401)
+            .send({ message: 'Unauthorized: No token provided.' })
+        }
+
+        await this.authService.verifyToken(token)
+      } catch (error) {
+        return reply.status(401).send({ message: 'Unauthorized.' })
+      }
     }
-
-    const [_, token] = authHeader.split(' ')
-
-    if (!token) {
-      return reply
-        .status(401)
-        .send({ message: 'Unauthorized: No token provided.' })
-    }
-
-    await auth.verifyIdToken(token)
-  } catch (error) {
-    return reply.status(401).send({ message: 'Unauthorized.' })
   }
 }

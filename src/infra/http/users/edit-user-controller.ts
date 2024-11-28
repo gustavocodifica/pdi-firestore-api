@@ -6,8 +6,10 @@ import { FirestoreUsersRepository } from '@/infra/database/firestore/repositorie
 
 import { ClientError } from '../errors/client-error'
 import { FastifyController } from '../protocols/fastify-controller'
-import { verifyToken } from '../middleware/verify-token'
 import { UserPresenter } from '../presenters/user-presenter'
+
+import { FirebaseAuthService } from '../auth/firebase-auth-service'
+import { FastifyVerifyTokenMiddleware } from '../middleware/verify-token'
 
 import z from 'zod'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
@@ -61,10 +63,13 @@ export async function editUser(app: FastifyInstance) {
 
   const editUserController = new EditUserController(editUserUseCase)
 
+  const authService = new FirebaseAuthService(auth)
+  const verifyTokenMiddleware = new FastifyVerifyTokenMiddleware(authService)
+
   app.put(
     '/users/:userId',
     {
-      preHandler: verifyToken,
+      preHandler: verifyTokenMiddleware.handle(),
       schema: {
         summary: 'Update a user',
         description: 'Access granted only when a valid token is provided.',

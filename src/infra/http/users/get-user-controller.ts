@@ -7,7 +7,9 @@ import { ResourceNotFoundError } from '@/domain/application/use-cases/errors/res
 import { UserPresenter } from '../presenters/user-presenter'
 import { ClientError } from '../errors/client-error'
 import { FastifyController } from '../protocols/fastify-controller'
-import { verifyToken } from '../middleware/verify-token'
+
+import { FirebaseAuthService } from '../auth/firebase-auth-service'
+import { FastifyVerifyTokenMiddleware } from '../middleware/verify-token'
 
 import z from 'zod'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
@@ -48,10 +50,13 @@ export async function getUser(app: FastifyInstance) {
 
   const getUserController = new GetUserController(getUserUseCase)
 
+  const authService = new FirebaseAuthService(auth)
+  const verifyTokenMiddleware = new FastifyVerifyTokenMiddleware(authService)
+
   app.get(
     '/users/:userId',
     {
-      preHandler: verifyToken,
+      preHandler: verifyTokenMiddleware.handle(),
 
       schema: {
         summary: 'Get a user',

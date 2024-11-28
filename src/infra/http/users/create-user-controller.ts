@@ -6,11 +6,13 @@ import { EmailAlreadyExistsError } from '@/domain/application/use-cases/errors/e
 
 import { ClientError } from '../errors/client-error'
 import { FastifyController } from '../protocols/fastify-controller'
-import { verifyToken } from '../middleware/verify-token'
+import { FastifyVerifyTokenMiddleware } from '../middleware/verify-token'
 import { UserPresenter } from '../presenters/user-presenter'
 
-import z from 'zod'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import { FirebaseAuthService } from '../auth/firebase-auth-service'
+
+import z from 'zod'
 
 export class CreateUserController implements FastifyController {
   constructor(private createUserUseCase: CreateUserUseCase) {}
@@ -59,10 +61,13 @@ export async function createUser(app: FastifyInstance) {
 
   const createUserController = new CreateUserController(createUserUseCase)
 
+  const authService = new FirebaseAuthService(auth)
+  const verifyTokenMiddleware = new FastifyVerifyTokenMiddleware(authService)
+
   app.post(
     '/users',
     {
-      preHandler: verifyToken,
+      preHandler: verifyTokenMiddleware.handle(),
       schema: {
         summary: 'Create a user',
         description: 'Access granted only when a valid token is provided.',
