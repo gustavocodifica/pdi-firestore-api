@@ -2,22 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/infra/server.ts",
+      "src": "./dist/infra/server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "(.*)",
-      "dest": "src/infra/server.ts"
+      "src": "/(.*)",
+      "dest": "/dist/infra/server.js"
     }
-  ],
-  "env": {
-    "port": "3000"
-  },
-  "typescript": {
-    "modulePaths": [
-      "src"
-    ]
-  }
+  ]
 }
