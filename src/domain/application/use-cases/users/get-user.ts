@@ -1,20 +1,22 @@
-import { UsersRepository } from '../repositories/users-repository'
+import { UsersRepository } from '../../repositories/users-repository'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
-interface DeleteUserUseCaseParams {
+interface GetUserParams {
   userId: string
 }
 
-export class DeleteUserUseCase {
+export class GetUserUseCase {
   constructor(private usersRepository: UsersRepository) {}
 
-  async execute({ userId }: DeleteUserUseCaseParams) {
+  async execute({ userId }: GetUserParams) {
     const user = await this.usersRepository.findById(userId)
 
     if (!user) {
       throw new ResourceNotFoundError()
     }
 
-    await this.usersRepository.delete(userId)
+    return {
+      user,
+    }
   }
 }

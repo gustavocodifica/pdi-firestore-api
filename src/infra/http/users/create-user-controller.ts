@@ -1,16 +1,16 @@
-import { auth, db } from '@/infra/database/firestore/firestore'
-import { FirestoreUsersRepository } from '@/infra/database/firestore/repositories/firestore-users-repository'
+import { auth } from '@/infra/database/firestore/firestore'
 
-import { CreateUserUseCase } from '@/domain/application/use-cases/create-user'
-import { EmailAlreadyExistsError } from '@/domain/application/use-cases/errors/email-already-exists-error'
+import { CreateUserUseCase } from '@/domain/application/use-cases/users/create-user'
+import { EmailAlreadyExistsError } from '@/domain/application/use-cases/users/errors/email-already-exists-error'
 
 import { ClientError } from '../errors/client-error'
 import { FastifyController } from '../protocols/fastify-controller'
 import { FastifyVerifyTokenMiddleware } from '../middleware/verify-token'
 import { UserPresenter } from '../presenters/user-presenter'
+import { FirebaseAuthService } from '../auth/firebase-auth-service'
+import { makeCreateUserUseCase } from '../factories/users/make-create-user-use-case'
 
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import { FirebaseAuthService } from '../auth/firebase-auth-service'
 
 import z from 'zod'
 
@@ -56,8 +56,7 @@ export class CreateUserController implements FastifyController {
 }
 
 export async function createUser(app: FastifyInstance) {
-  const usersRepository = new FirestoreUsersRepository(db, auth)
-  const createUserUseCase = new CreateUserUseCase(usersRepository)
+  const createUserUseCase = makeCreateUserUseCase()
 
   const createUserController = new CreateUserController(createUserUseCase)
 

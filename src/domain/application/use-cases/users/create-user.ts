@@ -1,5 +1,5 @@
 import { User } from '@/domain/enterprise/entities/user'
-import { UsersRepository } from '../repositories/users-repository'
+import { UsersRepository } from '../../repositories/users-repository'
 import { EmailAlreadyExistsError } from './errors/email-already-exists-error'
 
 interface CreateUserUseCaseParams {

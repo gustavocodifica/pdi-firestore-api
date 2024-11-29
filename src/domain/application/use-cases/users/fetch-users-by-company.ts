@@ -1,4 +1,4 @@
-import { UsersRepository } from '../repositories/users-repository'
+import { UsersRepository } from '../../repositories/users-repository'
 
 interface FetchUsersByCompanyUseCaseParams {
   company: string

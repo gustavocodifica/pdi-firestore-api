@@ -1,8 +1,7 @@
-import { EditUserUseCase } from '@/domain/application/use-cases/edit-user'
-import { ResourceNotFoundError } from '@/domain/application/use-cases/errors/resource-not-found-error'
+import { EditUserUseCase } from '@/domain/application/use-cases/users/edit-user'
+import { ResourceNotFoundError } from '@/domain/application/use-cases/users/errors/resource-not-found-error'
 
-import { auth, db } from '@/infra/database/firestore/firestore'
-import { FirestoreUsersRepository } from '@/infra/database/firestore/repositories/firestore-users-repository'
+import { auth } from '@/infra/database/firestore/firestore'
 
 import { ClientError } from '../errors/client-error'
 import { FastifyController } from '../protocols/fastify-controller'
@@ -13,6 +12,7 @@ import { FastifyVerifyTokenMiddleware } from '../middleware/verify-token'
 
 import z from 'zod'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import { makeEditUserUseCase } from '../factories/users/make-edit-user-use-case'
 
 export class EditUserController implements FastifyController {
   constructor(private editUserUseCase: EditUserUseCase) {}
@@ -58,8 +58,7 @@ export class EditUserController implements FastifyController {
 }
 
 export async function editUser(app: FastifyInstance) {
-  const usersRepository = new FirestoreUsersRepository(db, auth)
-  const editUserUseCase = new EditUserUseCase(usersRepository)
+  const editUserUseCase = makeEditUserUseCase()
 
   const editUserController = new EditUserController(editUserUseCase)
 

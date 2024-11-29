@@ -1,8 +1,7 @@
-import { auth, db } from '@/infra/database/firestore/firestore'
-import { FirestoreUsersRepository } from '@/infra/database/firestore/repositories/firestore-users-repository'
+import { auth } from '@/infra/database/firestore/firestore'
 
-import { GetUserUseCase } from '@/domain/application/use-cases/get-user'
-import { ResourceNotFoundError } from '@/domain/application/use-cases/errors/resource-not-found-error'
+import { GetUserUseCase } from '@/domain/application/use-cases/users/get-user'
+import { ResourceNotFoundError } from '@/domain/application/use-cases/users/errors/resource-not-found-error'
 
 import { UserPresenter } from '../presenters/user-presenter'
 import { ClientError } from '../errors/client-error'
@@ -10,6 +9,7 @@ import { FastifyController } from '../protocols/fastify-controller'
 
 import { FirebaseAuthService } from '../auth/firebase-auth-service'
 import { FastifyVerifyTokenMiddleware } from '../middleware/verify-token'
+import { makeGetUserUseCase } from '../factories/users/make-get-user-use-case'
 
 import z from 'zod'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
@@ -45,8 +45,7 @@ export class GetUserController implements FastifyController {
 }
 
 export async function getUser(app: FastifyInstance) {
-  const usersRepository = new FirestoreUsersRepository(db, auth)
-  const getUserUseCase = new GetUserUseCase(usersRepository)
+  const getUserUseCase = makeGetUserUseCase()
 
   const getUserController = new GetUserController(getUserUseCase)
 

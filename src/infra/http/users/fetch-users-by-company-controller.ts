@@ -1,7 +1,7 @@
 import { auth, db } from '@/infra/database/firestore/firestore'
 import { FirestoreUsersRepository } from '@/infra/database/firestore/repositories/firestore-users-repository'
 
-import { FetchUsersByCompanyUseCase } from '@/domain/application/use-cases/fetch-users-by-company'
+import { FetchUsersByCompanyUseCase } from '@/domain/application/use-cases/users/fetch-users-by-company'
 
 import { UserPresenter } from '../presenters/user-presenter'
 import { FastifyController } from '../protocols/fastify-controller'

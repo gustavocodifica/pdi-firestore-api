@@ -1,15 +1,15 @@
-import { DeleteUserUseCase } from '@/domain/application/use-cases/delete-user'
-import { ResourceNotFoundError } from '@/domain/application/use-cases/errors/resource-not-found-error'
+import { DeleteUserUseCase } from '@/domain/application/use-cases/users/delete-user'
+import { ResourceNotFoundError } from '@/domain/application/use-cases/users/errors/resource-not-found-error'
 
-import { auth, db } from '@/infra/database/firestore/firestore'
-import { FirestoreUsersRepository } from '@/infra/database/firestore/repositories/firestore-users-repository'
+import { auth } from '@/infra/database/firestore/firestore'
 
 import { ClientError } from '../errors/client-error'
 import { FastifyController } from '../protocols/fastify-controller'
 import { FastifyVerifyTokenMiddleware } from '../middleware/verify-token'
+import { makeDeleteUserUseCase } from '../factories/users/make-delete-user-use-case'
+import { FirebaseAuthService } from '../auth/firebase-auth-service'
 
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import { FirebaseAuthService } from '../auth/firebase-auth-service'
 
 import z from 'zod'
 
@@ -42,8 +42,7 @@ export class DeleteUserController implements FastifyController {
 }
 
 export async function deleteUser(app: FastifyInstance) {
-  const usersRepository = new FirestoreUsersRepository(db, auth)
-  const deleteUserUseCase = new DeleteUserUseCase(usersRepository)
+  const deleteUserUseCase = makeDeleteUserUseCase()
 
   const editUserController = new DeleteUserController(deleteUserUseCase)
 
