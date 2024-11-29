@@ -1,6 +1,7 @@
 import { InMemoryUsersRespository } from '@/repositories/in-memory-users-repository'
 import { EditUserUseCase } from './edit-user'
-import { User } from '@/domain/enterprise/entities/user'
+import { makeUser } from '@/factories/make-user'
+
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
 let sut: EditUserUseCase
@@ -13,14 +14,7 @@ describe('Edit user', () => {
   })
 
   it('should be able to edit a user', async () => {
-    const user = User.create({
-      displayName: 'John',
-      email: 'johndoe@gmail.com',
-      password: '123456',
-      department: 'CS',
-      company: 'development',
-      userType: 'admin',
-    })
+    const user = makeUser()
 
     inMemoryUsersRepository.create(user)
 

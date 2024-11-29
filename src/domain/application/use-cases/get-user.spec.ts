@@ -1,6 +1,7 @@
 import { InMemoryUsersRespository } from '@/repositories/in-memory-users-repository'
+import { makeUser } from '@/factories/make-user'
+
 import { GetUserUseCase } from './get-user'
-import { User } from '@/domain/enterprise/entities/user'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
 let sut: GetUserUseCase
@@ -13,14 +14,7 @@ describe('Get user', () => {
   })
 
   it('should be able to get user', async () => {
-    const user = User.create({
-      displayName: 'John',
-      email: 'johndoe@gmail.com',
-      password: '123456',
-      company: 'development',
-      department: 'CS',
-      userType: 'admin',
-    })
+    const user = makeUser()
 
     inMemoryUsersRepository.create(user)
 
@@ -28,7 +22,9 @@ describe('Get user', () => {
       userId: user.id,
     })
 
-    expect(inMemoryUsersRepository.items[0].displayName).toEqual('John')
+    expect(inMemoryUsersRepository.items[0].displayName).toEqual(
+      user.displayName,
+    )
   })
 
   it('should prevent to get a user that does not exists', async () => {

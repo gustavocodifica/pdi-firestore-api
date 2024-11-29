@@ -1,5 +1,6 @@
 import { InMemoryUsersRespository } from '@/repositories/in-memory-users-repository'
-import { User } from '@/domain/enterprise/entities/user'
+import { makeUser } from '@/factories/make-user'
+
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
 import { DeleteUserUseCase } from './delete-user'
 
@@ -13,14 +14,7 @@ describe('Delete user', () => {
   })
 
   it('should be able to delete a user', async () => {
-    const user = User.create({
-      displayName: 'John',
-      email: 'johndoe@gmail.com',
-      password: '123456',
-      department: 'CS',
-      company: 'development',
-      userType: 'admin',
-    })
+    const user = makeUser()
 
     inMemoryUsersRepository.create(user)
 
