@@ -11,19 +11,26 @@ import { FastifyVerifyTokenMiddleware } from '../middleware/verify-token'
 
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 
-import z from 'zod'
 export class FetchUsersByCompanyController implements FastifyController {
   constructor(private fetchUsersUseCase: FetchUsersByCompanyUseCase) {}
 
   async handle(request: FastifyRequest, reply: FastifyReply) {
-    const queryParams = z.object({
-      company: z.string(),
-    })
-
     try {
-      const { company } = queryParams.parse(request.query)
+      const authHeader = request.headers['authorization']
 
-      const response = await this.fetchUsersUseCase.execute({ company })
+      if (!authHeader) {
+        return reply
+          .status(401)
+          .send({ message: 'Unauthorized: No token provided.' })
+      }
+
+      const [_, token] = authHeader.split(' ')
+
+      const { uid: userId } = await auth.verifyIdToken(token)
+
+      const response = await this.fetchUsersUseCase.execute({
+        userId,
+      })
 
       const users = response.users.map(user => UserPresenter.toHTTP(user))
 
@@ -55,16 +62,6 @@ export async function fetchUsersByCompany(app: FastifyInstance) {
         summary: 'Fetch users',
         description: 'Access granted only when a valid token is provided.',
         tags: ['users'],
-        querystring: {
-          type: 'object',
-          properties: {
-            company: {
-              type: 'string',
-              description: 'The name of the company to filter users by.',
-            },
-          },
-          required: ['company'],
-        },
         response: {
           200: {
             type: 'object',

@@ -2,6 +2,7 @@ import { InMemoryUsersRespository } from '@/repositories/in-memory-users-reposit
 import { FetchUsersByCompanyUseCase } from './fetch-users-by-company'
 
 import { makeUser } from '@/factories/make-user'
+import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
 let sut: FetchUsersByCompanyUseCase
 let inMemoryUsersRepository: InMemoryUsersRespository
@@ -24,10 +25,18 @@ describe('Fetch users', () => {
     inMemoryUsersRepository.create(firstUser)
     inMemoryUsersRepository.create(secondUser)
 
-    const { users } = await sut.execute({ company: 'ramdom-company-name' })
+    const { users } = await sut.execute({ userId: firstUser.id.toString() })
 
     expect(users).toHaveLength(2)
     expect(users).toHaveLength(2)
     expect(users[0].company).toEqual('ramdom-company-name')
+  })
+
+  it('should prevent to fecth users if user id provided is invalid', async () => {
+    expect(() =>
+      sut.execute({
+        userId: 'fake-user-id',
+      }),
+    ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
 })
