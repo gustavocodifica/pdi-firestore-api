@@ -23,23 +23,46 @@ export class EditUserController implements FastifyController {
     })
 
     const bodySchema = z.object({
-      displayName: z.string(),
-      department: z.string(),
-      userType: z.string(),
+      displayName: z.string().optional(),
+      department: z.string().optional(),
+      userType: z.string().optional(),
+      address: z.string().optional(),
+      birthDate: z.string().optional(),
+      genre: z.string().optional(),
+      observation: z.string().optional(),
+      phone: z.string().optional(),
+      register: z.string().optional(),
+      responsible: z.string().optional(),
     })
 
     try {
       const { userId } = paramsSchema.parse(request.params)
 
-      const { displayName, department, userType } = bodySchema.parse(
-        request.body,
-      )
+      const {
+        displayName,
+        department,
+        userType,
+        address,
+        birthDate,
+        genre,
+        observation,
+        phone,
+        register,
+        responsible,
+      } = bodySchema.parse(request.body)
 
       const response = await this.editUserUseCase.execute({
         userId,
         displayName,
         department,
         userType,
+        address,
+        birthDate,
+        genre,
+        observation,
+        phone,
+        register,
+        responsible,
       })
 
       const user = UserPresenter.toHTTP(response.user)
@@ -85,6 +108,13 @@ export async function editUser(app: FastifyInstance) {
             displayName: { type: 'string' },
             department: { type: 'string' },
             userType: { type: 'string' },
+            register: { type: 'string' },
+            genre: { type: 'string' },
+            birthDate: { type: 'string' },
+            responsible: { type: 'string' },
+            phone: { type: 'string' },
+            observation: { type: 'string' },
+            address: { type: 'string' },
           },
         },
         response: {
@@ -100,6 +130,27 @@ export async function editUser(app: FastifyInstance) {
                   company: { type: 'string' },
                   department: { type: 'string' },
                   userType: { type: 'string' },
+                  register: {
+                    oneOf: [{ type: 'string' }, { type: 'null' }],
+                  },
+                  genre: {
+                    oneOf: [{ type: 'string' }, { type: 'null' }],
+                  },
+                  birthDate: {
+                    oneOf: [{ type: 'string' }, { type: 'null' }],
+                  },
+                  responsible: {
+                    oneOf: [{ type: 'string' }, { type: 'null' }],
+                  },
+                  phone: {
+                    oneOf: [{ type: 'string' }, { type: 'null' }],
+                  },
+                  observation: {
+                    oneOf: [{ type: 'string' }, { type: 'null' }],
+                  },
+                  address: {
+                    oneOf: [{ type: 'string' }, { type: 'null' }],
+                  },
                 },
               },
             },

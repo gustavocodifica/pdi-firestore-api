@@ -86,6 +86,27 @@ export async function fetchUsersByCompany(app: FastifyInstance) {
                     userType: {
                       type: 'string',
                     },
+                    register: {
+                      oneOf: [{ type: 'string' }, { type: 'null' }],
+                    },
+                    genre: {
+                      oneOf: [{ type: 'string' }, { type: 'null' }],
+                    },
+                    birthDate: {
+                      oneOf: [{ type: 'string' }, { type: 'null' }],
+                    },
+                    responsible: {
+                      oneOf: [{ type: 'string' }, { type: 'null' }],
+                    },
+                    phone: {
+                      oneOf: [{ type: 'string' }, { type: 'null' }],
+                    },
+                    observation: {
+                      oneOf: [{ type: 'string' }, { type: 'null' }],
+                    },
+                    address: {
+                      oneOf: [{ type: 'string' }, { type: 'null' }],
+                    },
                   },
                 },
               },

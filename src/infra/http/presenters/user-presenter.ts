@@ -9,6 +9,13 @@ export class UserPresenter {
       department: user.department,
       company: user.company,
       userType: user.userType,
+      register: user.register,
+      address: user.address,
+      genre: user.genre,
+      birthDate: user.birthDate,
+      reponsible: user.responsible,
+      phone: user.phone,
+      observation: user.observation,
     }
   }
 }

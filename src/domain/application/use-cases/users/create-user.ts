@@ -9,6 +9,13 @@ interface CreateUserUseCaseParams {
   department: string
   company: string
   userType: string
+  register?: string | null
+  address?: string | null
+  genre?: string | null
+  birthDate?: string | null
+  responsible?: string | null
+  phone?: string | null
+  observation?: string | null
 }
 
 export class CreateUserUseCase {
@@ -21,6 +28,13 @@ export class CreateUserUseCase {
     department,
     company,
     userType,
+    address,
+    birthDate,
+    genre,
+    register,
+    responsible,
+    phone,
+    observation,
   }: CreateUserUseCaseParams) {
     const emailAlreadyExists = await this.usersRepository.findByEmail(email)
 
@@ -35,6 +49,13 @@ export class CreateUserUseCase {
       department,
       company,
       userType,
+      address,
+      birthDate,
+      genre,
+      register,
+      responsible,
+      phone,
+      observation,
     })
 
     const response = await this.usersRepository.create(user)

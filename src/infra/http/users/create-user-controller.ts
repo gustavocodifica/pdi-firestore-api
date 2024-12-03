@@ -25,11 +25,31 @@ export class CreateUserController implements FastifyController {
       company: z.string(),
       department: z.string(),
       userType: z.string(),
+      address: z.string().nullable().default(null),
+      birthDate: z.string().nullable().default(null),
+      genre: z.string().nullable().default(null),
+      observation: z.string().nullable().default(null),
+      phone: z.string().nullable().default(null),
+      register: z.string().nullable().default(null),
+      responsible: z.string().nullable().default(null),
     })
 
     try {
-      const { displayName, email, password, company, department, userType } =
-        bodySchema.parse(request.body)
+      const {
+        displayName,
+        email,
+        password,
+        company,
+        department,
+        userType,
+        address,
+        birthDate,
+        genre,
+        observation,
+        phone,
+        register,
+        responsible,
+      } = bodySchema.parse(request.body)
 
       const response = await this.createUserUseCase.execute({
         displayName,
@@ -38,6 +58,13 @@ export class CreateUserController implements FastifyController {
         company,
         department,
         userType,
+        address,
+        birthDate,
+        genre,
+        observation,
+        phone,
+        register,
+        responsible,
       })
 
       const user = UserPresenter.toHTTP(response.user)
@@ -88,6 +115,13 @@ export async function createUser(app: FastifyInstance) {
             company: { type: 'string' },
             department: { type: 'string' },
             userType: { type: 'string' },
+            register: { type: 'string' },
+            genre: { type: 'string' },
+            birthDate: { type: 'string' },
+            responsible: { type: 'string' },
+            phone: { type: 'string' },
+            observation: { type: 'string' },
+            address: { type: 'string' },
           },
         },
         response: {
@@ -102,7 +136,30 @@ export async function createUser(app: FastifyInstance) {
                   email: { type: 'string', format: 'email' },
                   company: { type: 'string' },
                   department: { type: 'string' },
-                  userType: { type: 'string' },
+                  userType: {
+                    oneOf: [{ type: 'string' }, { type: 'null' }],
+                  },
+                  register: {
+                    oneOf: [{ type: 'string' }, { type: 'null' }],
+                  },
+                  genre: {
+                    oneOf: [{ type: 'string' }, { type: 'null' }],
+                  },
+                  birthDate: {
+                    oneOf: [{ type: 'string' }, { type: 'null' }],
+                  },
+                  responsible: {
+                    oneOf: [{ type: 'string' }, { type: 'null' }],
+                  },
+                  phone: {
+                    oneOf: [{ type: 'string' }, { type: 'null' }],
+                  },
+                  observation: {
+                    oneOf: [{ type: 'string' }, { type: 'null' }],
+                  },
+                  address: {
+                    oneOf: [{ type: 'string' }, { type: 'null' }],
+                  },
                 },
               },
             },

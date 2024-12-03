@@ -11,6 +11,17 @@ export function makeUser(override: Partial<UserProps> = {}, id?: string) {
       email: faker.internet.email(),
       department: faker.commerce.department(),
       userType: faker.internet.userAgent(),
+      address: faker.location.streetAddress(),
+      birthDate: faker.date
+        .past({
+          years: 10,
+        })
+        .toString(),
+      genre: faker.person.sexType(),
+      observation: faker.lorem.paragraph(),
+      phone: faker.phone.number(),
+      register: faker.finance.accountNumber(),
+      responsible: faker.person.firstName(),
       ...override,
     },
     id,

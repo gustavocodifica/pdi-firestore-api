@@ -7,6 +7,13 @@ export interface FirestoreUser {
   empresa: string
   departamento: string
   userType: string
+  cadastro?: string | null
+  endereço?: string | null
+  gênero?: string | null
+  nascimento?: string | null
+  responsável?: string | null
+  telefone?: string | null
+  observações?: string | null
 }
 
 export class FirestoreUserMapper {
@@ -19,6 +26,13 @@ export class FirestoreUserMapper {
         department: raw.departamento,
         userType: raw.userType,
         password: '',
+        address: raw.endereço,
+        birthDate: raw.nascimento,
+        genre: raw.gênero,
+        observation: raw.observações,
+        phone: raw.telefone,
+        register: raw.cadastro,
+        responsible: raw.responsável,
       },
       raw.id,
     )
@@ -32,6 +46,13 @@ export class FirestoreUserMapper {
       empresa: user.company,
       departamento: user.department,
       userType: user.userType,
+      cadastro: user.register,
+      endereço: user.address,
+      gênero: user.genre,
+      nascimento: user.birthDate,
+      observações: user.observation,
+      responsável: user.responsible,
+      telefone: user.phone,
     }
   }
 }

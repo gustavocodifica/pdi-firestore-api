@@ -23,6 +23,13 @@ describe('Create user', () => {
       company: user.company,
       department: user.department,
       userType: user.userType,
+      address: user.address,
+      birthDate: user.birthDate,
+      genre: user.genre,
+      observation: user.observation,
+      phone: user.phone,
+      register: user.register,
+      responsible: user.responsible,
     })
 
     expect(inMemoryUsersRepository.items).toHaveLength(1)
@@ -30,6 +37,7 @@ describe('Create user', () => {
       user.displayName,
     )
     expect(inMemoryUsersRepository.items[0].email).toEqual(user.email)
+    expect(inMemoryUsersRepository.items[0].genre).toEqual(user.genre)
   })
 
   it('should prevent to create a new user when the provided email already exists', async () => {
