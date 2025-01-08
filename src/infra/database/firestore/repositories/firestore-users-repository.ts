@@ -9,6 +9,8 @@ import {
   FirestoreUserMapper,
 } from '../mappers/firestore-user-mapper'
 
+import { permissions as defaultPermissions } from '../../object-values/permissions'
+
 export class FirestoreUsersRepository implements UsersRepository {
   constructor(
     private firestore: Firestore,
@@ -22,20 +24,32 @@ export class FirestoreUsersRepository implements UsersRepository {
       password: user.password,
     })
 
-    await this.firestore.collection('users').doc(response.uid).set({
-      displayName: user.displayName,
-      email: user.email,
-      empresa: user.company,
-      departamento: user.department,
-      userType: user.userType,
-      cadastro: user.register,
-      endereço: user.address,
-      gênero: user.genre,
-      nascimento: user.birthDate,
-      observações: user.observation,
-      responsável: user.responsible,
-      telefone: user.phone,
-    })
+    const adminPermissions = Object.fromEntries(
+      Object.entries(defaultPermissions).map(([key, value]) => [
+        key,
+        Object.fromEntries(Object.keys(value).map(key => [key, true])),
+      ]),
+    )
+
+    await this.firestore
+      .collection('users')
+      .doc(response.uid)
+      .set({
+        displayName: user.displayName,
+        email: user.email,
+        empresa: user.company,
+        departamento: user.department,
+        userType: user.userType,
+        cadastro: user.register,
+        endereço: user.address,
+        gênero: user.genre,
+        nascimento: user.birthDate,
+        observações: user.observation,
+        responsável: user.responsible,
+        telefone: user.phone,
+        permissions:
+          user.userType !== 'viewer' ? adminPermissions : defaultPermissions,
+      })
 
     const raw: FirestoreUser = {
       id: response.uid,
