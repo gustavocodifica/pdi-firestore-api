@@ -48,3 +48,9 @@ app.register(createUser)
 app.register(editUser)
 app.register(deleteUser)
 app.register(fetchUsersByCompany)
+
+app.get('/hello-world', async (req, res) => {
+  return res.send({
+    message: 'hello world',
+  })
+})
