@@ -54,3 +54,9 @@ app.get('/hello-world', async (req, res) => {
     message: 'hello world',
   })
 })
+
+app.get('/hello-world-2', async (req, res) => {
+  return res.send({
+    message: 'hello world 2',
+  })
+})
