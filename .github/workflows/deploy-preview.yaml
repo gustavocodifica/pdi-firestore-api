@@ -1,4 +1,5 @@
 name: vercel preview deployment
+
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -13,11 +14,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
       - name: install vercel CLI
         run: npm install --global vercel@latest
+
       - name: install project dependencies
         run: npm install
+
       - name: build project
         run: npm run build
+
       - name: deploy preview
-        run: vercel --token=${{ VERCEL.TOKEN }}
+        run: vercel --token=${{ secrets.VERCEL_TOKEN }}
